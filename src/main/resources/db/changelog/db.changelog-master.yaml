@@ -1,0 +1,182 @@
+databaseChangeLog:
+  - changeSet:
+      id: 27032024_06
+      author: jdev
+      changes:
+        - createSequence:
+            cycle: false
+            dataType: INTEGER
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
+            maxValue: 2147483647
+            schemaName: public
+            sequenceName: product_template_id_seq
+        - createTable:
+            tableName: product_template
+            columns:
+              - column:
+                  name: id
+                  type: INTEGER
+                  remarks: ID Unique, PK
+                  defaultValueComputed: nextval('product_template_id_seq')
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_product_template_id
+              - column:
+                  name: restaurant_tmpl_id
+                  type: INTEGER
+              - column:
+                  name: name
+                  type: VARCHAR
+              - column:
+                  name: description
+                  type: VARCHAR
+              - column:
+                  name: picture
+                  type: VARCHAR
+              - column:
+                  name: list_price
+                  type: DECIMAL(10, 2)
+                  remarks: Sales Price
+              - column:
+                  name: sales_ok
+                  type: BOOL
+                  remarks: Can be Sold
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  remarks: Created on
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  remarks: Last Updated on
+              - column:
+                  name: create_uid
+                  type: VARCHAR
+                  remarks: Created by
+
+  - changeSet:
+      id: 27032024_07
+      author: jdev
+      changes:
+        - createSequence:
+            cycle: false
+            dataType: INTEGER
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
+            maxValue: 2147483647
+            schemaName: public
+            sequenceName: product_attribute_id_seq
+        - createTable:
+            tableName: product_attribute
+            columns:
+              - column:
+                  name: id
+                  type: INTEGER
+                  remarks: ID Unique, PK
+                  defaultValueComputed: nextval('product_attribute_id_seq')
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_product_attribute_id
+              - column:
+                  name: name
+                  type: VARCHAR
+                  remarks: Attribute Name
+              - column:
+                  name: display_type
+                  type: VARCHAR
+                  remarks: Display Type
+              - column:
+                  name: sequence
+                  type: smallint
+              - column:
+                  name: product_tmpl_id
+                  type: INTEGER
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  remarks: Created on
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  remarks: Last Updated on
+              - column:
+                  name: create_uid
+                  type: VARCHAR
+                  remarks: Created by
+        - addForeignKeyConstraint:
+            baseColumnNames: product_tmpl_id
+            baseTableName: product_attribute
+            constraintName: product_attribute_product_tmpl_id_fkey
+            referencedColumnNames: id
+            referencedTableName: product_template
+
+  - changeSet:
+      id: 27032024_08
+      author: jdev
+      changes:
+        - createSequence:
+            cycle: false
+            dataType: INTEGER
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
+            maxValue: 2147483647
+            schemaName: public
+            sequenceName: product_attribute_value_id_seq
+        - createTable:
+            tableName: product_attribute_value
+            columns:
+              - column:
+                  name: id
+                  type: INTEGER
+                  remarks: ID Unique, PK
+                  defaultValueComputed: nextval('product_attribute_value_id_seq')
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_product_attribute_value_id
+              - column:
+                  name: name
+                  type: VARCHAR
+                  remarks: Value
+              - column:
+                  name: attribute_id
+                  type: INTEGER
+              - column:
+                  name: default_extra_price
+                  type: DECIMAL(10, 2)
+                  remarks: Extra Price
+              - column:
+                  name: sequence
+                  type: smallint
+                  remarks: Sequence
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  remarks: Created on
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  remarks: Last Updated on
+              - column:
+                  name: create_uid
+                  type: VARCHAR
+                  remarks: Created by
+        - addForeignKeyConstraint:
+            baseColumnNames: attribute_id
+            baseTableName: product_attribute_value
+            constraintName: product_attribute_value_attribute_id_fkey
+            referencedColumnNames: id
+            referencedTableName: product_attribute
+            validate: true
