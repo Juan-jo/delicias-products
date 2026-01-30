@@ -1,26 +1,27 @@
-package org.delicias.product.domain.model;
+package org.delicias.attribute.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.delicias.common.dto.product.DisplayAttrType;
+import org.delicias.product.domain.model.ProductTemplate;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "product_template")
+@Table(name = "product_attribute")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductTemplate {
+public class ProductAttribute {
 
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "product_template_id_seq")
+            generator = "product_attribute_id_seq")
     @SequenceGenerator(
-            name = "product_template_id_seq",
+            name = "product_attribute_id_seq",
             allocationSize = 1
     )
     private Integer id;
@@ -28,20 +29,16 @@ public class ProductTemplate {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "display_type")
+    @Enumerated(EnumType.STRING)
+    private DisplayAttrType displayType;
 
-    @Column(name = "restaurant_tmpl_id")
-    private Integer restaurantTmplId;
+    @Column(name = "sequence")
+    private Short sequence;
 
-    @Column(name = "list_price", precision = 10, scale = 2)
-    private BigDecimal listPrice;
-
-    @Column(name = "sales_ok")
-    Boolean salesOk;
-
-    @Column(name = "picture")
-    String picture;
+    @ManyToOne
+    @JoinColumn(name = "product_tmpl_id", referencedColumnName = "id")
+    private ProductTemplate product;
 
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -49,9 +46,6 @@ public class ProductTemplate {
     @Column(name = "updated_at", insertable = false)
     private LocalDateTime updatedAt;
 
-    public ProductTemplate(Integer id) {
-        this.id = id;
-    }
 
     @PrePersist
     protected void onCreate() {
@@ -62,5 +56,9 @@ public class ProductTemplate {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public ProductAttribute(Integer id) {
+        this.id = id;
     }
 }
