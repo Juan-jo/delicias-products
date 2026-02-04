@@ -1,5 +1,7 @@
 package org.delicias.product.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -13,6 +15,7 @@ import org.delicias.product.dto.ProductTmplFilterItemDTO;
 import org.delicias.product.dto.ProductTmplFilterReqDTO;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,6 +36,7 @@ public class ProductTemplateService {
                 .restaurantTmplId(req.restaurantTmplId())
                 .name(req.name())
                 .description(req.description())
+                .listPrice(BigDecimal.valueOf(0.0))
                 .salesOk(false)
                 .build();
 
@@ -54,6 +58,39 @@ public class ProductTemplateService {
         entity.setDescription(req.description());
         entity.setListPrice(req.listPrice());
         entity.setSalesOk(req.salesOk());
+    }
+
+
+    @Transactional
+    public void patch(Integer productTmplId, Map<String, Object> mapData) {
+
+        ProductTemplate entity = repository.findById(productTmplId);
+
+        if(entity == null) {
+            throw new NotFoundException("ProductTemplate Not Found");
+        }
+
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        ProductTemplate patched = mapper.convertValue(mapData, ProductTemplate.class);
+
+        if (patched.getListPrice() != null) {
+            entity.setListPrice(patched.getListPrice());
+        }
+
+        if (patched.getSalesOk() != null) {
+            entity.setSalesOk(patched.getSalesOk()); // Boolean
+        }
+
+        if (patched.getName() != null) {
+            entity.setName(patched.getName());
+        }
+
+        if (patched.getDescription() != null) {
+            entity.setDescription(patched.getDescription());
+        }
+
     }
 
 
@@ -87,8 +124,9 @@ public class ProductTemplateService {
     public PagedResult<ProductTmplFilterItemDTO> filterSearch(
             ProductTmplFilterReqDTO req
     ) {
-        List<ProductTmplFilterItemDTO> filtered = repository.searchByName(
+        List<ProductTmplFilterItemDTO> filtered = repository.searchByFilter(
                         req.getName(),
+                        req.getRestaurantTmplId(),
                         req.getPage(),
                         req.getSize(),
                         req.getOrderColumn(),
@@ -97,10 +135,12 @@ public class ProductTemplateService {
                 .stream().map(it -> ProductTmplFilterItemDTO.builder()
                         .id(it.getId())
                         .name(it.getName())
+                        .description(it.getDescription())
+                        .listPrice(Optional.ofNullable(it.getListPrice()).orElse(BigDecimal.ZERO))
                         .picture(Optional.ofNullable(it.getPicture()).orElse(defaultPicture))
                         .build()).toList();
 
-        long total = repository.countByName(req.getName());
+        long total = repository.countByName(req.getName(), req.getRestaurantTmplId());
 
         return new PagedResult<>(
                 filtered,

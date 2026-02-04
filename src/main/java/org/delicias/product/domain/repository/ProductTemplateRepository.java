@@ -12,10 +12,34 @@ import java.util.List;
 @ApplicationScoped
 public class ProductTemplateRepository implements PanacheRepositoryBase<ProductTemplate, Integer> {
 
-    private final String queryFilter = "LOWER(name) LIKE LOWER(?1)";
+    private final String queryFilter = "LOWER(name) LIKE LOWER(?1) AND restaurantTmplId = ?2 ";
 
-    public List<ProductTemplate> searchByName(
+    public List<ProductTemplate> searchByFilter(
             String name,
+            Integer restaurantTmplId,
+            int page,
+            int size,
+            String sortBy,
+            Sort.Direction direction
+    ) {
+        PanacheQuery<ProductTemplate> query;
+        Sort sort = Sort.by(sortBy).direction(direction);
+
+        if (name == null || name.isBlank()) {
+            query = find("restaurantTmplId = ?1", sort, restaurantTmplId);
+        } else {
+            String queryFilter = "name LIKE ?1 AND restaurantTmplId = ?2";
+            query = find(queryFilter, sort, "%" + name.toLowerCase() + "%", restaurantTmplId);
+        }
+
+        return query
+                .page(Page.of(page, size))
+                .list();
+    }
+
+    public List<ProductTemplate> searchByFilter2(
+            String name,
+            Integer restaurantTmplId,
             int page,
             int size,
             String sortBy,
@@ -24,14 +48,12 @@ public class ProductTemplateRepository implements PanacheRepositoryBase<ProductT
         PanacheQuery<ProductTemplate> query;
 
         if (name == null || name.isBlank()) {
-            query = findAll(
-                    Sort.by(sortBy, direction)
-            );
+            query = find(" restaurantTmplId = ?2", Sort.by(sortBy, direction), restaurantTmplId);
         } else {
             query = find(
                     queryFilter,
                     Sort.by(sortBy, direction),
-                    "%" + name + "%"
+                    "%" + name + "%", restaurantTmplId
             );
         }
 
@@ -40,13 +62,16 @@ public class ProductTemplateRepository implements PanacheRepositoryBase<ProductT
                 .list();
     }
 
-    public long countByName(String name) {
+    public long countByName(
+            String name,
+            Integer restaurantTmplId
+    ) {
         if (name == null || name.isBlank()) {
-            return count();
+            return count("restaurantTmplId = ?1", restaurantTmplId);
         }
         return count(
                 queryFilter,
-                "%" + name + "%"
+                "%" + name + "%", restaurantTmplId
         );
     }
 }

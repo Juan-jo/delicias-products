@@ -16,6 +16,8 @@ import org.delicias.product.dto.ProductTmplDTO;
 import org.delicias.product.dto.ProductTmplFilterReqDTO;
 import org.delicias.product.service.ProductTemplateService;
 
+import java.util.Map;
+
 @Authenticated
 @Path("/api/products")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -44,6 +46,18 @@ public class ProductTemplateResource {
 
         return Response.ok().build();
     }
+
+    @PATCH
+    @Path("/{productTmplId}")
+    public Response patch(
+            @PathParam("productTmplId") Integer id,
+            Map<String, Object> data
+    ) {
+
+        service.patch(id, data);
+        return Response.ok().build();
+    }
+
 
     @GET
     @Path("/{id}")
