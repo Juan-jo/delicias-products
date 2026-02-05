@@ -4,6 +4,7 @@ package org.delicias.product.resource;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.ConvertGroup;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -15,7 +16,9 @@ import org.delicias.product.dto.CreateProductTmplDTO;
 import org.delicias.product.dto.ProductTmplDTO;
 import org.delicias.product.dto.ProductTmplFilterReqDTO;
 import org.delicias.product.service.ProductTemplateService;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Authenticated
@@ -87,5 +90,20 @@ public class ProductTemplateResource {
         var filtered = service.filterSearch(req);
 
         return Response.ok(filtered).build();
+    }
+
+
+    @PUT
+    @Path("/picture")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateLogo(
+            @NotNull @FormParam("productTmplId") Integer productTmplId,
+            @NotNull @FormParam("file") FileUpload file
+    ) throws IOException {
+
+        Map<String, String> response = service.uploadPicture(productTmplId, file);
+
+        return Response.ok(response).build();
     }
 }

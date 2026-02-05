@@ -13,8 +13,11 @@ import org.delicias.product.dto.CreateProductTmplDTO;
 import org.delicias.product.dto.ProductTmplDTO;
 import org.delicias.product.dto.ProductTmplFilterItemDTO;
 import org.delicias.product.dto.ProductTmplFilterReqDTO;
+import org.delicias.supabase.SupabaseStorageService;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +25,9 @@ import java.util.Optional;
 
 @ApplicationScoped
 public class ProductTemplateService {
+
+    @Inject
+    SupabaseStorageService storageService;
 
     @Inject
     ProductTemplateRepository repository;
@@ -43,6 +49,30 @@ public class ProductTemplateService {
         repository.persist(entity);
 
         return Map.of("productTmplId", entity.getId());
+    }
+
+    @Transactional
+    public Map<String, String> uploadPicture(Integer restaurantTmplId, FileUpload logoFile) throws IOException {
+
+        ProductTemplate entity = repository.findById(restaurantTmplId);
+
+        if(entity == null) {
+            throw new NotFoundException("ProductTemplate Tmpl Not Found");
+        }
+
+        String pictureUrl = storageService.uploadFile(logoFile);
+
+        deleteCurrentPicture(entity.getPicture());
+
+        entity.setPicture(pictureUrl);
+
+        return Map.of("picture", pictureUrl);
+    }
+
+    private void deleteCurrentPicture(String pictureUrl) {
+        if(Optional.ofNullable(pictureUrl).isPresent()) {
+            storageService.deleteFile(pictureUrl);
+        }
     }
 
     @Transactional
@@ -106,9 +136,10 @@ public class ProductTemplateService {
                 .id(entity.getId())
                 .name(entity.getName())
                 .description(entity.getDescription())
-                .listPrice(entity.getListPrice())
+                .listPrice(Optional.ofNullable(entity.getListPrice()).orElse(BigDecimal.ZERO))
                 .salesOk(entity.getSalesOk())
                 .restaurantTmplId(entity.getRestaurantTmplId())
+                .picture(Optional.ofNullable(entity.getPicture()).orElse(defaultPicture))
                 .build();
     }
 
