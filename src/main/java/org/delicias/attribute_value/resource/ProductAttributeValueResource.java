@@ -63,5 +63,17 @@ public class ProductAttributeValueResource {
         return Response.noContent().build();
     }
 
+    @GET
+    @Path("/{id}")
+    public Response getById(
+            @PathParam("id") Integer attrValueId
+    ) {
+        var response = service.findById(attrValueId);
+
+        return Response.ok(
+                response
+        ).build();
+    }
+
 
 }

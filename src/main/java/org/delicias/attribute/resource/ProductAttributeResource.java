@@ -30,6 +30,16 @@ public class ProductAttributeResource {
         ).build();
     }
 
+    @GET
+    @Path("/{attributeId}")
+    public Response findById(
+            @PathParam("attributeId") Integer attributeId) {
+
+        return Response.ok(
+                service.findById(attributeId)
+        ).build();
+    }
+
     @POST
     public Response create(
             @PathParam("productTmplId") Integer productTmplId,

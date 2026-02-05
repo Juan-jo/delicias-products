@@ -62,4 +62,20 @@ public class ProductAttributeValueService {
                         .build()).toList();
     }
 
+    public ProductAttributeValueDTO findById(Integer attrValueId) {
+
+        var entity = repository.findById(attrValueId);
+
+        if (entity == null) {
+            throw new NotFoundException("ProductAttributeValue Not Found");
+        }
+
+        return ProductAttributeValueDTO.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .extraPrice(entity.getExtraPrice())
+                .sequence(entity.getSequence())
+                .build();
+    }
+
 }

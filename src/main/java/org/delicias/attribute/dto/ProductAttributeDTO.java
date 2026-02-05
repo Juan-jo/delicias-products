@@ -8,6 +8,9 @@ import org.delicias.common.dto.product.DisplayAttrType;
 import org.delicias.common.validation.OnCreate;
 import org.delicias.common.validation.OnUpdate;
 
+import java.math.BigDecimal;
+import java.util.Set;
+
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ProductAttributeDTO(
@@ -22,6 +25,18 @@ public record ProductAttributeDTO(
         DisplayAttrType displayType,
 
         @NotNull(message = "sequence is mandatory", groups = { OnCreate.class, OnUpdate.class })
-        Short sequence
+        Short sequence,
 
-) { }
+        Set<AttributeValueItemDTO> values
+
+) {
+
+        @Builder
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public record AttributeValueItemDTO(
+                Integer id,
+                String name,
+                Short sequence,
+                BigDecimal extraPrice
+        ) { }
+}

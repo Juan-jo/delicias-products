@@ -48,7 +48,7 @@ public class ProductTemplateService {
 
         repository.persist(entity);
 
-        return Map.of("productTmplId", entity.getId());
+        return Map.of("id", entity.getId());
     }
 
     @Transactional
