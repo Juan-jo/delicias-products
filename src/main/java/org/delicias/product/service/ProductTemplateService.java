@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 import org.delicias.common.dto.PagedResult;
+import org.delicias.common.dto.RestaurantMenuProductDTO;
 import org.delicias.product.domain.model.ProductTemplate;
 import org.delicias.product.domain.repository.ProductTemplateRepository;
 import org.delicias.product.dto.CreateProductTmplDTO;
@@ -179,6 +180,18 @@ public class ProductTemplateService {
                 req.getPage(),
                 req.getSize()
         );
+    }
+
+    public List<RestaurantMenuProductDTO> findByIds(List<Integer> ids) {
+
+        return repository.findByIds(ids)
+                .stream().map(it -> RestaurantMenuProductDTO.builder()
+                        .id(it.getId())
+                        .name(it.getName())
+                        .description(it.getDescription())
+                        .listPrice(Optional.ofNullable(it.getListPrice()).orElse(BigDecimal.ZERO))
+                        .pictureUrl(Optional.ofNullable(it.getPicture()).orElse(defaultPicture))
+                        .build()).toList();
     }
 
 }

@@ -9,6 +9,7 @@ import jakarta.validation.groups.ConvertGroup;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.delicias.common.dto.RestaurantMenuProductDTO;
 import org.delicias.common.validation.OnCreate;
 import org.delicias.common.validation.OnFilter;
 import org.delicias.common.validation.OnUpdate;
@@ -19,6 +20,8 @@ import org.delicias.product.service.ProductTemplateService;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Authenticated
@@ -29,6 +32,16 @@ public class ProductTemplateResource {
 
     @Inject
     ProductTemplateService service;
+
+    @GET
+    @Path("/batch")
+    public List<RestaurantMenuProductDTO> getBatch(@QueryParam("ids") List<Integer> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return service.findByIds(ids);
+    }
 
     @POST
     public Response create(

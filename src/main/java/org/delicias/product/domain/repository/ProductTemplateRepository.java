@@ -74,4 +74,8 @@ public class ProductTemplateRepository implements PanacheRepositoryBase<ProductT
                 "%" + name + "%", restaurantTmplId
         );
     }
+
+    public List<ProductTemplate> findByIds(List<Integer> ids) {
+        return find("id in ?1", ids).list();
+    }
 }
