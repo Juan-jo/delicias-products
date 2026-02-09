@@ -9,7 +9,7 @@ import jakarta.validation.groups.ConvertGroup;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.delicias.common.dto.RestaurantMenuProductDTO;
+import org.delicias.common.dto.ProductResumeDTO;
 import org.delicias.common.validation.OnCreate;
 import org.delicias.common.validation.OnFilter;
 import org.delicias.common.validation.OnUpdate;
@@ -35,7 +35,7 @@ public class ProductTemplateResource {
 
     @GET
     @Path("/batch")
-    public List<RestaurantMenuProductDTO> getBatch(@QueryParam("ids") List<Integer> ids) {
+    public List<ProductResumeDTO> getBatch(@QueryParam("ids") List<Integer> ids) {
         if (ids == null || ids.isEmpty()) {
             return Collections.emptyList();
         }
