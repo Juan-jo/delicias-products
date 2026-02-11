@@ -9,7 +9,7 @@ import jakarta.validation.groups.ConvertGroup;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.delicias.common.dto.ProductResumeDTO;
+import org.delicias.common.dto.product.ProductResumeDTO;
 import org.delicias.common.validation.OnCreate;
 import org.delicias.common.validation.OnFilter;
 import org.delicias.common.validation.OnUpdate;

@@ -7,7 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 import org.delicias.common.dto.PagedResult;
-import org.delicias.common.dto.ProductResumeDTO;
+import org.delicias.common.dto.product.ProductResumeDTO;
 import org.delicias.product.domain.model.ProductTemplate;
 import org.delicias.product.domain.repository.ProductTemplateRepository;
 import org.delicias.product.dto.CreateProductTmplDTO;
