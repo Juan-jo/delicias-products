@@ -33,16 +33,6 @@ public class ProductTemplateResource {
     @Inject
     ProductTemplateService service;
 
-    @GET
-    @Path("/batch")
-    public List<ProductResumeDTO> getBatch(@QueryParam("ids") List<Integer> ids) {
-        if (ids == null || ids.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        return service.findByIds(ids);
-    }
-
     @POST
     public Response create(
             @Valid @ConvertGroup(to = OnCreate.class) CreateProductTmplDTO req
@@ -119,4 +109,41 @@ public class ProductTemplateResource {
 
         return Response.ok(response).build();
     }
+
+
+
+    // Calls from microservices
+    @GET
+    @Path("/batch")
+    public List<ProductResumeDTO> getBatch(
+            @QueryParam("ids") List<Integer> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return service.findByIds(ids);
+    }
+
+    @GET
+    @Path("/{productTmplId}/candidate-shoppingcart")
+    public Response geProductCandidateShoppingCart(
+            @PathParam("productTmplId") Integer productTmplId ) {
+
+        return Response.ok(
+                service.getCandidateShoppingLine(productTmplId)
+        ).build();
+
+    }
+
+    @GET
+    @Path("/prices")
+    public Response geProductPrices(
+            @QueryParam("ids") List<Integer> ids) {
+
+        return Response.ok(
+                service.getProductPrices(ids)
+        ).build();
+
+    }
+
 }

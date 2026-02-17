@@ -6,7 +6,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import org.delicias.attribute_value.domain.model.ProductAttributeValue;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @ApplicationScoped
 public class ProductAttributeValueRepository implements PanacheRepositoryBase<ProductAttributeValue, Integer> {
@@ -18,5 +20,13 @@ public class ProductAttributeValueRepository implements PanacheRepositoryBase<Pr
     @Transactional
     public void deleteByAttribute(Integer attributeId) {
         delete("attribute.id", attributeId);
+    }
+
+    public List<ProductAttributeValue> findByAttributes(Set<Integer> attributeIds) {
+        if (attributeIds == null || attributeIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return list("attribute.id IN ?1", attributeIds);
     }
 }

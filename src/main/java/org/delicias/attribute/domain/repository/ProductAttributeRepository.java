@@ -14,4 +14,8 @@ public class ProductAttributeRepository implements PanacheRepositoryBase<Product
     public List<ProductAttribute> findByProduct(Integer restaurantTmplId) {
         return list("product.id", Sort.ascending("sequence"), restaurantTmplId);
     }
+
+    public List<ProductAttribute> findByIds(List<Integer> ids) {
+        return find("product.id in ?1", Sort.ascending("sequence"), ids).list();
+    }
 }
